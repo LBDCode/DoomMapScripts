@@ -2,3 +2,5 @@
 env
 .vscode
 vscode
+loadShapefile
+loadShapefile.md
