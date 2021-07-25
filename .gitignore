@@ -4,3 +4,9 @@ env
 vscode
 loadShapefile
 loadShapefile.md
+current_all.cpg
+current_all.dbf
+current_all.prj
+current_all.shx
+current_all.tar.gx
+current_all.shp
