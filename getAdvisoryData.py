@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 
 
 def getAdvisoryData():
-    print("geting advisory data")
-
 
     url = 'https://tgftp.nws.noaa.gov/SL.us008001/DF.sha/DC.cap/DS.WWA/current_all.tar.gz'
 

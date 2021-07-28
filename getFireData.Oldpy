@@ -1,0 +1,58 @@
+import requests
+import zipfile
+import io
+import os
+import subprocess
+import psycopg2
+from dotenv import load_dotenv
+
+
+
+
+
+
+
+
+
+
+def getFireData():
+    print("getting Fire data")
+    url = 'https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/shapes/zips/MODIS_C6_1_USA_contiguous_and_Hawaii_48h.zip'
+
+  
+    response = requests.get(url)
+    zippedData = zipfile.ZipFile(io.BytesIO(response.content))
+    zippedData.extractall("./fireData")
+
+
+
+
+
+def updateDatabase():
+    
+    load_dotenv()
+
+    DB_NAME = os.getenv('DB_NAME')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    HOST = os.getenv('HOST')
+    FIRE_TABLE=os.getenv('FIRE_TABLE')
+
+
+    conn = psycopg2.connect(dbname=DB_NAME, port=PORT, user=USER,password=PASSWORD, host=HOST)
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM {0}".format(FIRE_TABLE))
+
+    conn.commit()
+    conn.close()
+    
+
+    cmd = 'shp2pgsql ./fireData/MODIS_C6_1_USA_contiguous_and_Hawaii_48h.shp public.MODIS_Fire | psql -q -h localhost -d {0} -U {1}'.format(DB_NAME, USER)
+
+    subprocess.call(cmd, shell=True)
+
+
+# getFireData()
+updateDatabase()
