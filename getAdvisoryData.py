@@ -8,6 +8,19 @@ from dotenv import load_dotenv
 
 
 
+def emptyDir():
+    dataPath ="./advisoryData/"
+    dirList = os.listdir(dataPath)
+    print(dirList)
+    
+    for file in dirList:
+        os.remove(dataPath + file)
+
+    print(os.listdir(dataPath))
+
+
+
+
 def getAdvisoryData():
 
     url = 'https://tgftp.nws.noaa.gov/SL.us008001/DF.sha/DC.cap/DS.WWA/current_all.tar.gz'
@@ -51,5 +64,6 @@ def updateDatabase():
     subprocess.call(cmd, shell=True)
 
 
+emptyDir()
 getAdvisoryData()
 updateDatabase()

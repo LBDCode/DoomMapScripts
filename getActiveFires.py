@@ -18,8 +18,6 @@ load_dotenv()
 
 
 def getAdvisoryData():
-    print("geting fire data")
-
 
     DB_NAME = os.getenv('DB_NAME')
     PORT = os.getenv('PORT')
