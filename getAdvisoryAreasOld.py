@@ -21,6 +21,7 @@ def getAdvisoryData():
     USER = os.getenv('USER')
     PASSWORD = os.getenv('PASSWORD')
     HOST = os.getenv('HOST')
+    AREA_TABLE = os.getenv('AREA_TABLE')
 
     conn = psycopg2.connect(dbname=DB_NAME, port=PORT, user=USER,password=PASSWORD, host=HOST)
 
@@ -58,9 +59,9 @@ def getAdvisoryData():
          
         #  print(event, json.dumps(data))
 
-         cur.execute('INSERT INTO weather_advisory_areas (effective, onset, expires, ends, status, severity, certainty, event_type, headline, description, instruction, area_description, ugc_geocode)'
+         cur.execute('INSERT INTO %(AREA_TABLE)s (effective, onset, expires, ends, status, severity, certainty, event_type, headline, description, instruction, area_description, ugc_geocode)'
             'VALUES (%(effective)s, %(onset)s, %(expires)s, %(ends)s, %(status)s, %(severity)s, %(certainty)s, %(event_type)s, %(headline)s, %(description)s, %(instruction)s, %(area_description)s, %(geocode)s)',
-            {'effective': effective, 'onset': onset, 'expires': expires, 'ends': ends, 'status': status, 'severity': severity, 'certainty': certainty, 'event_type': event, 'headline': headline, 'description': description, 'instruction': instruction, 'area_description': area_description, 'geocode': geocode})
+            {'AREA_TABLE':AREA_TABLE, 'effective': effective, 'onset': onset, 'expires': expires, 'ends': ends, 'status': status, 'severity': severity, 'certainty': certainty, 'event_type': event, 'headline': headline, 'description': description, 'instruction': instruction, 'area_description': area_description, 'geocode': geocode})
 
 
 
