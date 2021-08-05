@@ -1,6 +1,5 @@
 import requests
 import tarfile
-import io
 import os
 import subprocess
 import psycopg2
@@ -14,7 +13,6 @@ def emptyDir():
     
     for file in dirList:
         os.remove(dataPath + file)
-
 
 
 

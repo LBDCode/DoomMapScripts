@@ -1,15 +1,11 @@
 
 import requests
 import io
-import io
-import csv
 import psycopg2
 from psycopg2.sql import Identifier, SQL
 from decimal import Decimal
 import os
-import json
 from dotenv import load_dotenv
-import time
 import datetime
 
 

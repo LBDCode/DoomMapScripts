@@ -5,7 +5,7 @@ import os
 import subprocess
 import psycopg2
 from dotenv import load_dotenv
-from glob import glob, iglob
+from glob import iglob
 
 
 
