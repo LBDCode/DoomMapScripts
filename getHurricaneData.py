@@ -73,7 +73,7 @@ def updateDatabase():
         table = hurricaneTables[shapefileType]
 
         shapefilePath = dataPath + shapefile
-        cmd = 'shp2pgsql -a {0} public.{1} | SET PGPASSWORD={2} psql -q -h localhost -d {3} -U {4}'.format(shapefilePath, table, PASSWORD, DB_NAME, USER)
+        cmd = 'shp2pgsql -a {0} public.{1} | psql -q -d {2} -U {3} -w'.format(shapefilePath, table, DB_NAME, USER)
         subprocess.call(cmd, shell=True)
 
 

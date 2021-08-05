@@ -55,7 +55,7 @@ def updateDatabase():
     dirList = [os.path.basename(file) for file in iglob(dataPath + "*.shp")]
     latestShapefile = dirList[0]
 
-    cmd = 'shp2pgsql -a ./droughtData/{0} public.{1} | SET PGPASSWORD={2} psql -q -h localhost -d {2} -U {3}'.format(latestShapefile, DROUGHT_TABLE, PASSWORD, DB_NAME, USER)
+    cmd = 'shp2pgsql -a ./droughtData/{0} public.{1} | psql -q -d {2} -U {3} -w'.format(latestShapefile, DROUGHT_TABLE, DB_NAME, USER)
 
     subprocess.call(cmd, shell=True)
 
