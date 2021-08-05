@@ -11,12 +11,10 @@ from dotenv import load_dotenv
 def emptyDir():
     dataPath ="./advisoryData/"
     dirList = os.listdir(dataPath)
-    print(dirList)
     
     for file in dirList:
         os.remove(dataPath + file)
 
-    print(os.listdir(dataPath))
 
 
 
@@ -59,7 +57,7 @@ def updateDatabase():
     conn.close()
     
 
-    cmd = 'shp2pgsql -a ./advisoryData/current_all.shp public.{0} | psql -q -h localhost -d {1} -U {2}'.format(AREA_TABLE, DB_NAME, USER)
+    cmd = 'shp2pgsql -a ./advisoryData/current_all.shp public.{0} | SET PGPASSWORD={1} psql -q -h localhost -d {2} -U {3}'.format(AREA_TABLE, PASSWORD, DB_NAME, USER)
 
     subprocess.call(cmd, shell=True)
 

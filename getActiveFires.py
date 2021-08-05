@@ -38,11 +38,8 @@ def getAdvisoryData():
     response = requests.get(url).json()
     fires = response['features']
 
-    print(FIRE_TABLE)
-
 
     for fire in fires:
-
         
         if fire["attributes"]["DailyAcres"] and fire["attributes"]["DailyAcres"] > 100:
             OBJECTID = fire["attributes"]["OBJECTID"]

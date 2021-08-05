@@ -1,6 +1,23 @@
 from bs4 import BeautifulSoup
 import requests
-import re
+import io
+import zipfile
+import os
+import subprocess
+import psycopg2
+from dotenv import load_dotenv
+from glob import glob, iglob
+
+
+
+
+def emptyDir():
+    dataPath ="./hurricaneData/"
+    dirList = os.listdir(dataPath)
+    
+    for file in dirList:
+        os.remove(dataPath + file)
+
 
 
 def getHurricaneData():
@@ -9,17 +26,58 @@ def getHurricaneData():
     soup = BeautifulSoup(page.text, 'html.parser')
 
     links = soup.select('a[href*="5day_latest"]')
-
+    
     for link in links:
-        print(url + link['href'])
-
-    # first_table = soup.select_one("table:nth-of-type(1)")
-    # atlantic_cells = first_table.select('tr:nth-of-type(3) td:nth-of-type(2)')
-    # eastern_pacific_cells = first_table.select('tr:nth-of-type(3) td:nth-of-type(3)')
-    # central_pacific_cells = first_table.select('tr:nth-of-type(3) td:nth-of-type(4)')
- 
-    # regions = [atlantic_cells, eastern_pacific_cells, central_pacific_cells]
+        downloadURL = url + link['href']
+        response = requests.get(downloadURL)
+        zippedData = zipfile.ZipFile(io.BytesIO(response.content))
+        zippedData.extractall("./hurricaneData")
 
 
 
+def updateDatabase():
+    
+    load_dotenv()
+
+    DB_NAME = os.getenv('DB_NAME')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    HOST = os.getenv('HOST')
+    LINE_TABLE = os.getenv('LINE_TABLE')
+    POINTS_TABLE = os.getenv('POINTS_TABLE')
+    POLYGON_TABLE = os.getenv('POLYGON_TABLE')
+
+    hurricaneTables = {
+        "lin": LINE_TABLE,
+        "pgn": POLYGON_TABLE,
+        "pts": POINTS_TABLE
+    }
+
+
+    conn = psycopg2.connect(dbname=DB_NAME, port=PORT, user=USER,password=PASSWORD, host=HOST)
+    cur = conn.cursor()
+
+    for table in [LINE_TABLE, POINTS_TABLE, POLYGON_TABLE]:
+        cur.execute("DELETE FROM {0}".format(table))
+
+    conn.commit()
+    conn.close()
+    
+    
+    dataPath ="./hurricaneData/"
+    dirList = [os.path.basename(file) for file in iglob(dataPath + "*.shp")]
+
+    for shapefile in dirList:
+        shapefileType = shapefile.split('.shp')[0].split('5day_')[1]
+        table = hurricaneTables[shapefileType]
+
+        shapefilePath = dataPath + shapefile
+        cmd = 'shp2pgsql -a {0} public.{1} | SET PGPASSWORD={2} psql -q -h localhost -d {3} -U {4}'.format(shapefilePath, table, PASSWORD, DB_NAME, USER)
+        subprocess.call(cmd, shell=True)
+
+
+
+emptyDir()
 getHurricaneData()
+updateDatabase()
